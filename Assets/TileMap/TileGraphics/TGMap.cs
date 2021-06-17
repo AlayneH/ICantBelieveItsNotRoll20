@@ -5,12 +5,15 @@ using System.Collections;
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
 public class TGMap : MonoBehaviour {
-	public int size_x = 100;
-	public int size_z = 50;
+	public int size_x = 30;
+	public int size_z = 30;
 	public float tileSize = 5.0f;
 
 	public Texture2D terrainTiles;
 	public int tileResolution;
+	TDMap map;
+	Texture2D texture;
+	Color[][] tiles;
 
 	// Use this for initialization
 	void Start () {
@@ -30,15 +33,69 @@ public class TGMap : MonoBehaviour {
 		return tiles;
 	}
 
+	public void SetTexture(int xRange, int yRange, int type, Vector3 originPoint) {
+		int xStart = (int)originPoint.x;
+		int yStart = (int)originPoint.z;
+		int xEnd =  xRange+(int)originPoint.x;
+		int yEnd = yRange+(int)originPoint.z;
+
+		// Check bounds
+		if(xStart < 0)
+			xStart = 0;
+		if(yStart < 0)
+			yStart = 0;
+		if(xEnd > size_x)
+			xEnd = size_x;
+		if(yEnd > size_z)
+			yEnd = size_z;
+
+		for(int y = yStart; y < yEnd; y++){
+			for(int x = xStart; x < xEnd; x++) {
+				Color[] p = tiles[type];
+				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
+			}
+		}
+		texture.Apply();
+		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+		mesh_renderer.sharedMaterials[0].mainTexture = texture;
+	}
+
+	public void ResetTexture(int xRange, int yRange, Vector3 originPoint) {
+		int xStart = (int)originPoint.x;
+		int yStart = (int)originPoint.z;
+		int xEnd =  xRange+(int)originPoint.x;
+		int yEnd = yRange+(int)originPoint.z;
+
+		// Check bounds
+		if(xStart < 0)
+			xStart = 0;
+		if(yStart < 0)
+			yStart = 0;
+		if(xEnd > size_x)
+			xEnd = size_x;
+		if(yEnd > size_z)
+			yEnd = size_z;
+
+		for(int y = yStart; y < yEnd; y++){
+			for(int x = xStart; x < xEnd; x++) {
+				Color[] p = tiles[map.GetTile(x, y)];
+				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
+			}
+		}
+		texture.Apply();
+		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+		mesh_renderer.sharedMaterials[0].mainTexture = texture;
+	}
+
 	void BuildTexture() {
 		int texWidth = size_x * tileResolution;
 		int texHeight = size_z * tileResolution;
 
-		TDMap map = GetComponent<TDMap>();
+		map = GetComponent<TDMap>();
 		map.BuildMap(size_x, size_z);
 		// TDMap map = new TDMap(size_x, size_z);
-		Texture2D texture = new Texture2D(texWidth, texHeight);
-		Color[][] tiles = ChopUpTiles();
+		texture = new Texture2D(texWidth, texHeight);
+	 	tiles = ChopUpTiles();
 
 		for(int y=0; y < size_z; y++) {
 			for(int x=0; x < size_x; x++) {

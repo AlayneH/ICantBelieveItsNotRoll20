@@ -1,4 +1,5 @@
-﻿using System.Collections;
+// TODO: Make visual range of movement use character values, not hard coded numbers
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -27,9 +28,11 @@ public class GameManager : MonoBehaviour
   GameObject Enemy;
   Character EnemyStats;
   GameObject map;
+  TGMap tileSetter;
   int whosTurn = 0;
 
-  class PlayerInfo {
+  class PlayerInfo
+  {
     public GameObject Player;
     public Character PlayerStats;
   }
@@ -53,6 +56,7 @@ public class GameManager : MonoBehaviour
   void CreateMap()
   {
     map = Instantiate(mapPrefab);
+    tileSetter = map.GetComponent<TGMap>();
     cursor = map.GetComponent<TileMapMouse>();
   }
 
@@ -67,7 +71,7 @@ public class GameManager : MonoBehaviour
     Players[1] = new PlayerInfo();
     Players[1].Player = Instantiate(playerPrefab, felemarLocation);
     Players[1].PlayerStats = Players[1].Player.GetComponent<Character>();
-    Players[1].PlayerStats.CreateCharacter("Felemar", 80, 17, 30);
+    Players[1].PlayerStats.CreateCharacter("Felemar", 80, 17, 35);
     // Lucian
     Players[2] = new PlayerInfo();
     Players[2].Player = Instantiate(playerPrefab, lucianLocation);
@@ -100,13 +104,17 @@ public class GameManager : MonoBehaviour
   void PlayerTurn()
   {
     playerHUD.SetHUD(Players[whosTurn].PlayerStats);
+    Players[whosTurn].PlayerStats.NewRound();
   }
 
   public void OnMoveButton()
   {
     if(state != BattleState.PLAYERTURN)
       return;
-
+        // Origin point is the bottom left corner of the range
+    int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
+    Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+    tileSetter.SetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, whosTurn, originPoint);
     StartCoroutine(PlayerMove());
   }
 
@@ -115,10 +123,35 @@ public class GameManager : MonoBehaviour
     while(true) {
       if(Input.GetMouseButtonDown(0)) {
         // If the cursor is on the map
-        if(cursor.currentTileCoord.x != -1)
+        Vector3 tileCoord = cursor.currentTileCoord;
+        if(tileCoord.x != -1)
         {
-          Players[whosTurn].Player.transform.position = new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z);
-          yield break;
+          // Get distance to move
+          float xDistance = tileCoord.x - Players[whosTurn].Player.transform.position.x;
+          float zDistance = tileCoord.z - Players[whosTurn].Player.transform.position.z;
+          float distance;
+          // Absolute value
+          if(xDistance < 0) {
+            xDistance = xDistance * -1;
+          }
+          if(zDistance < 0) {
+            zDistance = zDistance * -1;
+          }
+          if(xDistance > zDistance) {
+            distance = xDistance;
+          }
+          else {
+            distance = zDistance;
+          }
+          // check if that is in range
+          int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
+          if(distance <= currentMovement) {
+            // Move player
+            Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+            tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
+            Players[whosTurn].PlayerStats.Move(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), distance);
+            yield break;
+          }
         }
       }
       yield return null;

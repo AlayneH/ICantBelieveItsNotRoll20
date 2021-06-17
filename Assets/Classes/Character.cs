@@ -30,11 +30,15 @@ using UnityEngine;
     currentMovement = maxMovement;
   }
 
-  public void Move(Vector3 newLocation)
+  public void Move(Vector3 newLocation, float distance)
   {
+    currentMovement = currentMovement - (int)distance;
     transform.position = newLocation;
   }
 
+  public int GetCurrentMovement(){
+    return currentMovement;
+  }
   /* Applys damage to a character
    * Returns: True if the damage knocks the character unconcious
    *          False, otherwise
@@ -45,5 +49,10 @@ using UnityEngine;
     if(currentHP <= 0)
       return true;
     return false;
+  }
+
+  public void NewRound()
+  {
+    currentMovement = maxMovement;
   }
 }
