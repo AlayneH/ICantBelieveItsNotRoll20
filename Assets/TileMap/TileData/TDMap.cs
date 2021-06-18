@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TDMap: MonoBehaviour {
-  int[,] tiles;
+  //int[,] tiles;
+  Tile[,] tiles;
   int size_x;
   int size_y;
 
@@ -12,32 +13,38 @@ public class TDMap: MonoBehaviour {
     this.size_x = size_x;
     this.size_y = size_y;
 
-    tiles = new int[size_x,size_y];
+    //tiles = new int[size_x,size_y];
+    tiles = new Tile[size_x,size_y];
 
     for(int x=0; x < size_x; x++) {
 			for(int y=0; y < size_y; y++) {
+        tiles[x,y] = new Tile(x, y);
         int random = Random.Range(0, 100);
         if(random < 60) {
-          tiles[x,y] = 2;
+          //tiles[x,y] = 2;
+          tiles[x,y].SetType(2);
         }
         else if(random < 75) {
-          tiles[x,y] = 0;
+          //tiles[x,y] = 0;
+          tiles[x,y].SetType(0);
         }
         else if(random < 90) {
-          tiles[x,y] = 3;
+          //tiles[x,y] = 3;
+          tiles[x,y].SetType(3);
         }
         else {
-          tiles[x,y] = 1;
+          //tiles[x,y] = 1;
+          tiles[x,y].SetType(1);
         }
       }
     }
   }
 
   public int GetTile(int x, int y) {
-    return tiles[x, y];
+    return tiles[x,y].type;
   }
 
   public void SetTile(int x, int y, int type) {
-    tiles[x,y] = type;
+    tiles[x,y].type = type;
   }
 }

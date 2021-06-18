@@ -96,11 +96,6 @@ public class GameManager : MonoBehaviour
     EnemyStats.CreateCharacter("Enemy", 80, 17, 30);
   }
 
-  void TurnTracker()
-  {
-
-  }
-
   void PlayerTurn()
   {
     playerHUD.SetHUD(Players[whosTurn].PlayerStats);
@@ -114,7 +109,7 @@ public class GameManager : MonoBehaviour
         // Origin point is the bottom left corner of the range
     int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
     Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
-    tileSetter.SetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, whosTurn, originPoint);
+    tileSetter.SetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, 0, originPoint);
     StartCoroutine(PlayerMove());
   }
 
