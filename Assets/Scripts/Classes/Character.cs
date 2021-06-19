@@ -1,3 +1,6 @@
+// TODO: Either change move to be a path instead of a point, or implement pathfinding here
+// Preferably the first option so that the charcter doesn't know information about the map
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,13 +33,22 @@ using UnityEngine;
     currentMovement = maxMovement;
   }
 
-  public void Move(Vector3 newLocation, float distance)
+  public void Move(Vector3 endPos, float distance)
   {
     currentMovement = currentMovement - (int)distance;
-    transform.position = newLocation;
+    StartCoroutine(MoveOverSpeed(endPos, 20f));
   }
 
-  public int GetCurrentMovement(){
+  public IEnumerator MoveOverSpeed(Vector3 endPos, float speed)
+  {
+    while (transform.position != endPos)
+    {
+      transform.position = Vector3.MoveTowards(transform.position, endPos, speed * Time.deltaTime);
+      yield return new WaitForEndOfFrame ();
+    }
+  }
+
+  public int GetCurrentMovement() {
     return currentMovement;
   }
   /* Applys damage to a character

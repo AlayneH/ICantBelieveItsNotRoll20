@@ -12,29 +12,54 @@ public class TDMap: MonoBehaviour {
     // Constructor needs to be public if we want other objects to be able to instantiate this
     this.size_x = size_x;
     this.size_y = size_y;
-
-    //tiles = new int[size_x,size_y];
     tiles = new Tile[size_x,size_y];
 
+    // Create tiles
     for(int x=0; x < size_x; x++) {
 			for(int y=0; y < size_y; y++) {
         tiles[x,y] = new Tile(x, y);
         int random = Random.Range(0, 100);
         if(random < 60) {
-          //tiles[x,y] = 2;
           tiles[x,y].SetType(2);
         }
         else if(random < 75) {
-          //tiles[x,y] = 0;
           tiles[x,y].SetType(0);
         }
         else if(random < 90) {
-          //tiles[x,y] = 3;
           tiles[x,y].SetType(3);
         }
         else {
-          //tiles[x,y] = 1;
           tiles[x,y].SetType(1);
+        }
+      }
+    }
+
+    // Calculate neighbours
+    for(int x=0; x < size_x; x++) {
+      for(int y=0; y < size_y; y++) {
+        if(x >= 1) {
+          tiles[x,y].neighbours.Add(tiles[x-1,y]); // left
+          if(y >= 1) {
+            tiles[x,y].neighbours.Add(tiles[x-1,y-1]); // bottom left
+          }
+          if(y < size_y-1) {
+            tiles[x,y].neighbours.Add(tiles[x-1,y+1]); // top left
+          }
+        }
+        if(x < size_x-1) {
+          tiles[x,y].neighbours.Add(tiles[x+1,y]); // right
+          if(y >= 1) {
+            tiles[x,y].neighbours.Add(tiles[x+1,y-1]); // bottom right
+          }
+          if(y < size_y-1) {
+            tiles[x,y].neighbours.Add(tiles[x+1,y+1]); // top right
+          }
+        }
+        if(y >= 1) {
+          tiles[x,y].neighbours.Add(tiles[x,y-1]); // bottom
+        }
+        if(y < size_y-1) {
+          tiles[x,y].neighbours.Add(tiles[x,y+1]); // top
         }
       }
     }
@@ -46,5 +71,9 @@ public class TDMap: MonoBehaviour {
 
   public void SetTile(int x, int y, int type) {
     tiles[x,y].type = type;
+  }
+
+  public void ShortestPathTo(int x, int y) {
+    // Check if the player can enter that tile
   }
 }
