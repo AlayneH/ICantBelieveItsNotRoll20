@@ -19,11 +19,12 @@ public class GameManager : MonoBehaviour
   public Transform sullyLocation;
   public Transform enemyLocation;
   public BattleState state;
-  public BattleHUD playerHUD;
+  public GameObject UIManager;
 
   PlayerInfo[] Players = new PlayerInfo[5]; // player index is in alphabetical order for now
   // Blanche, Felemar, Lucian, Ruffles, Sully
   // TODO: change this order to be based on initiative rolls
+  UIManager UIScript;
   TileMapMouse cursor;
   GameObject Enemy;
   Character EnemyStats;
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
     CreateMap();
     CreatePlayers();
     CreateEnemies();
+    UIScript = UIManager.GetComponent<UIManager>();
     // TODO: Create a turn tracker and change state dynamically based on initiative rolls
     state = BattleState.PLAYERTURN;
     PlayerTurn();
@@ -98,8 +100,8 @@ public class GameManager : MonoBehaviour
 
   void PlayerTurn()
   {
-    playerHUD.SetHUD(Players[whosTurn].PlayerStats);
     Players[whosTurn].PlayerStats.NewRound();
+    UIScript.StartPlayerTurn(Players[whosTurn].PlayerStats);
   }
 
   public void OnMoveButton()
@@ -110,10 +112,10 @@ public class GameManager : MonoBehaviour
     int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
     Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
     tileSetter.SetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, 0, originPoint);
-    StartCoroutine(PlayerMove());
+    StartCoroutine(ValidateMovement());
   }
 
-  IEnumerator PlayerMove()
+  IEnumerator ValidateMovement()
   {
     while(true) {
       if(Input.GetMouseButtonDown(0)) {
@@ -149,6 +151,13 @@ public class GameManager : MonoBehaviour
           }
         }
       }
+      if(Input.GetKeyDown(KeyCode.Escape))
+      {
+        int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
+        Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+        tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
+        yield break;
+      }
       yield return null;
     }
   }
@@ -175,15 +184,14 @@ public class GameManager : MonoBehaviour
 
   IEnumerator EnemyTurn()
   {
-    playerHUD.SetHUD(EnemyStats);
+    UIScript.StartEnemyTurn(EnemyStats);
     yield return new WaitForSeconds(1);
 
     // Move enemy
     float factor = 5f;
     float x = Mathf.Round(Random.Range(25, 85) / factor) * factor;
     float z = Mathf.Round(Random.Range(25, 105) / factor) * factor;
-    Enemy.transform.position = new Vector3(x, 2.5f, z);
-    yield return new WaitForSeconds(1);
+    EnemyStats.Move(new Vector3(x, 2.5f, z), 0);
 
     // End enemy turn
     whosTurn = 0;
