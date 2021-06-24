@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1fae88f00538d14da73d300e7d7e7c4, type: 3}
+  m_Name: longbow
+  m_EditorClassIdentifier: 
+  name: longbow
+  type: 0
+  range: 150
+  atkMod: 0
+  dmgMod: 0
+  diceType: 8
+  numDice: 1
+  dmgType: 8
+  ammoCount: 0
+  disadvRange: 600
+  loading: 0

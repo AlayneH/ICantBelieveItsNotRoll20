@@ -23,6 +23,8 @@ using UnityEngine;
   //   int charisma;
   // }
 
+  // Inventory
+
   public void CreateCharacter(string name, int HP, int armor, int speed)
   {
     charName = name;
@@ -48,10 +50,7 @@ using UnityEngine;
     }
   }
 
-  public int GetCurrentMovement() {
-    return currentMovement;
-  }
-  /* Applys damage to a character
+  /* Applys damage to this character
    * Returns: True if the damage knocks the character unconcious
    *          False, otherwise
    */
@@ -66,5 +65,17 @@ using UnityEngine;
   public void NewRound()
   {
     currentMovement = maxMovement;
+  }
+
+  public int GetCurrentMovement() {
+    return currentMovement;
+  }
+
+  public int GetCurrentHP() {
+    return currentHP;
+  }
+
+  public int GetMaxHP() {
+    return maxHP;
   }
 }

@@ -33,60 +33,6 @@ public class TGMap : MonoBehaviour {
 		return tiles;
 	}
 
-	public void SetTexture(int xRange, int yRange, int type, Vector3 originPoint) {
-		int xStart = (int)originPoint.x;
-		int yStart = (int)originPoint.z;
-		int xEnd =  xRange+(int)originPoint.x;
-		int yEnd = yRange+(int)originPoint.z;
-
-		// Check bounds
-		if(xStart < 0)
-			xStart = 0;
-		if(yStart < 0)
-			yStart = 0;
-		if(xEnd > size_x)
-			xEnd = size_x;
-		if(yEnd > size_z)
-			yEnd = size_z;
-
-		for(int y = yStart; y < yEnd; y++){
-			for(int x = xStart; x < xEnd; x++) {
-				Color[] p = tiles[type];
-				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
-			}
-		}
-		texture.Apply();
-		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-		mesh_renderer.sharedMaterials[0].mainTexture = texture;
-	}
-
-	public void ResetTexture(int xRange, int yRange, Vector3 originPoint) {
-		int xStart = (int)originPoint.x;
-		int yStart = (int)originPoint.z;
-		int xEnd =  xRange+(int)originPoint.x;
-		int yEnd = yRange+(int)originPoint.z;
-
-		// Check bounds
-		if(xStart < 0)
-			xStart = 0;
-		if(yStart < 0)
-			yStart = 0;
-		if(xEnd > size_x)
-			xEnd = size_x;
-		if(yEnd > size_z)
-			yEnd = size_z;
-
-		for(int y = yStart; y < yEnd; y++){
-			for(int x = xStart; x < xEnd; x++) {
-				Color[] p = tiles[map.GetTile(x, y)];
-				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
-			}
-		}
-		texture.Apply();
-		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
-		mesh_renderer.sharedMaterials[0].mainTexture = texture;
-	}
-
 	void BuildTexture() {
 		int texWidth = size_x * tileResolution;
 		int texHeight = size_z * tileResolution;
@@ -170,4 +116,63 @@ public class TGMap : MonoBehaviour {
 		Debug.Log("Done Mesh");
 		BuildTexture();
   }
+
+	public void DsplMoveRange(Vector3 charLocation, int charSpeed) {
+		Vector3 originPoint = (charLocation / 5f) - new Vector3(charSpeed/5 + 1, 0, charSpeed/5 + 1);
+		SetTexture(charSpeed*2/5 + 1, charSpeed*2/5 + 1, 0, originPoint);
+	}
+
+	void SetTexture(int xRange, int yRange, int type, Vector3 originPoint) {
+		int xStart = (int)originPoint.x;
+		int yStart = (int)originPoint.z;
+		int xEnd =  xRange+(int)originPoint.x;
+		int yEnd = yRange+(int)originPoint.z;
+
+		// Check bounds
+		if(xStart < 0)
+			xStart = 0;
+		if(yStart < 0)
+			yStart = 0;
+		if(xEnd > size_x)
+			xEnd = size_x;
+		if(yEnd > size_z)
+			yEnd = size_z;
+
+		for(int y = yStart; y < yEnd; y++){
+			for(int x = xStart; x < xEnd; x++) {
+				Color[] p = tiles[type];
+				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
+			}
+		}
+		texture.Apply();
+		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+		mesh_renderer.sharedMaterials[0].mainTexture = texture;
+	}
+
+	public void ResetTexture(int xRange, int yRange, Vector3 originPoint) {
+		int xStart = (int)originPoint.x;
+		int yStart = (int)originPoint.z;
+		int xEnd =  xRange+(int)originPoint.x;
+		int yEnd = yRange+(int)originPoint.z;
+
+		// Check bounds
+		if(xStart < 0)
+			xStart = 0;
+		if(yStart < 0)
+			yStart = 0;
+		if(xEnd > size_x)
+			xEnd = size_x;
+		if(yEnd > size_z)
+			yEnd = size_z;
+
+		for(int y = yStart; y < yEnd; y++){
+			for(int x = xStart; x < xEnd; x++) {
+				Color[] p = tiles[map.GetTile(x, y)];
+				texture.SetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution, p);
+			}
+		}
+		texture.Apply();
+		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
+		mesh_renderer.sharedMaterials[0].mainTexture = texture;
+	}
 }

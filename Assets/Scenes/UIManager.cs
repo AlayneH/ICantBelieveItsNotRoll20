@@ -1,4 +1,4 @@
-// TODO: Create an Enemy HUD for the DM 
+// TODO: Create an Enemy HUD for the DM
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,5 +30,10 @@ public class UIManager : MonoBehaviour
   {
     PlayerHUD.SetActive(true);
     PlayerScript.SetHUD(character);
+  }
+
+  public void AttackPlayer(Character character)
+  {
+    PlayerScript.UpdateHP(character);
   }
 }
