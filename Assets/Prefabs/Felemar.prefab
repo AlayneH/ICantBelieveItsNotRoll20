@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2889800447860013369}
   - component: {fileID: -807830287151503883}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Felemar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d1accc8e7e3e6fd4787cad518dd8e5c1, type: 2}
+  - {fileID: 2100000, guid: 40fcfbec0783ec64a8359a677a450685, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charName: 
-  playerStats: {fileID: 11400000, guid: d6eda7b748a594a4887859c9d2a94b64, type: 2}
+  playerStats: {fileID: 11400000, guid: a7ee39ca101ed8d40a7d1d109913d65e, type: 2}
 --- !u!114 &-807830287151503883
 MonoBehaviour:
   m_ObjectHideFlags: 0

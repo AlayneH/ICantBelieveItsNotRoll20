@@ -20,20 +20,20 @@ public class UIManager : MonoBehaviour
     PlayerScript = PlayerHUD.GetComponent<PlayerHUD>();
   }
 
-  public void StartPlayerTurn(Character character)
+  public void StartPlayerTurn(Player Player)
   {
     PlayerHUD.SetActive(true);
-    PlayerScript.SetHUD(character);
+    PlayerScript.SetHUD(Player.charName, Player.currentHP, Player.maxHP);
   }
 
-  public void StartEnemyTurn(Character character)
+  public void StartEnemyTurn(Enemy Enemy)
   {
     PlayerHUD.SetActive(true);
-    PlayerScript.SetHUD(character);
+    PlayerScript.SetHUD(Enemy.charName, Enemy.currentHP, Enemy.maxHP);
   }
 
-  public void AttackPlayer(Character character)
+  public void AttackPlayer(Player Player)
   {
-    PlayerScript.UpdateHP(character);
+    PlayerScript.UpdateHP(Player.currentHP, Player.maxHP);
   }
 }

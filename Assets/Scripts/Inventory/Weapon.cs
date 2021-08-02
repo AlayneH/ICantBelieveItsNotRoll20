@@ -13,16 +13,6 @@ public enum DamageType {none, acid, bludgeoning, cold, fire, force, lightning, n
   public int diceType; // 4, 6, 8, 10, 12, 20
   public int numDice;
   public DamageType dmgType;
-  // TODO: Add dice type
-
-  // public Weapon(int range, int atkMod, int dmgMod, int diceType, int numDice, int dmgType) {
-  //   this.range = range;
-  //   this.dmgMod = dmgMod;
-  //   this.atkMod = atkMod;
-  //   this.diceType = diceType;
-  //   this.numDice = numDice;
-  //   this.dmgType = dmgType;
-  // }
 
   public override void Equip() {
 

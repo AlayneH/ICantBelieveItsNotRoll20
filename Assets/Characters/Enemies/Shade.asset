@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7650f528ae35bf1479af90216f273df0, type: 3}
+  m_Name: Shade
+  m_EditorClassIdentifier: 
+  charName: Shade
+  maxHP: 0
+  currentHP: 0
+  AC: 0
+  maxMovement: 0
+  currentMovement: 0
+  spawnPoint: {x: 50, y: 2.5, z: 50}
+  enemyPrefab: {fileID: 2828170116944561546, guid: a1555f9934975ae488044a6342043607,
+    type: 3}

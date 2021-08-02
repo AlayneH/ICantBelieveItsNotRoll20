@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2889800447860013369}
   - component: {fileID: -807830287151503883}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Ruffles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d1accc8e7e3e6fd4787cad518dd8e5c1, type: 2}
+  - {fileID: 2100000, guid: d5a17b19f3942a5449d71aba14b4aeb7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

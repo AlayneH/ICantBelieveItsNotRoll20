@@ -8,14 +8,14 @@ public class PlayerHUD : MonoBehaviour
   public TextMeshProUGUI nameText;
   public TextMeshProUGUI HPText;
 
-  public void SetHUD(Character character)
+  public void SetHUD(string charName, int currentHP, int maxHP)
   {
-    nameText.text = character.charName;
-    HPText.text = "HP: " + character.GetCurrentHP() + "/" + character.GetMaxHP();
+    nameText.text = charName;
+    UpdateHP(currentHP, maxHP);
   }
 
-  public void UpdateHP(Character character)
+  public void UpdateHP(int currentHP, int maxHP)
   {
-    HPText.text = "HP: " + character.GetCurrentHP() + "/" + character.GetMaxHP();
+    HPText.text = "HP: " + currentHP + "/" + maxHP;
   }
 }

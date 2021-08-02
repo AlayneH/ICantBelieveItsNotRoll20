@@ -1,3 +1,5 @@
+// TODO: Remove button pressing calabilities while player and enemy actions/movements are playing out
+// BUG: If player 1 starts to move, then ends turn before movement is finished, then player 2 will finish the movement
 // TODO: Make visual range of movement use character values, not hard coded numbers
 using System.Collections;
 using System.Collections.Generic;
@@ -10,33 +12,20 @@ public enum PlayerNames {BLANCHE, FELEMAR, LUCIAN, RUFFLES, SULLY}
 public class GameManager : MonoBehaviour
 {
   public GameObject mapPrefab;
-  public GameObject playerPrefab;
-  public GameObject enemyPrefab;
-  public Transform blancheLocation;
-  public Transform felemarLocation;
-  public Transform lucianLocation;
-  public Transform rufflesLocation;
-  public Transform sullyLocation;
-  public Transform enemyLocation;
   public BattleState state;
   public GameObject UIManager;
-
-  PlayerInfo[] Players = new PlayerInfo[5]; // player index is in alphabetical order for now
+  public Player[] Players_SO;
+  public GameObject[] Players_GO = new GameObject[5];
+  public Enemy[] Enemies_SO;
+  public GameObject[] Enemies_GO = new GameObject[1];
+  // player index is in alphabetical order for now
   // Blanche, Felemar, Lucian, Ruffles, Sully
   // TODO: change this order to be based on initiative rolls
   UIManager UIScript;
   TileMapMouse cursor;
-  GameObject Enemy;
-  Character EnemyStats;
   GameObject map;
   TGMap tileSetter;
   int whosTurn = 0;
-
-  class PlayerInfo
-  {
-    public GameObject Player;
-    public Character PlayerStats;
-  }
 
   void Start()
   {
@@ -64,51 +53,28 @@ public class GameManager : MonoBehaviour
 
   void CreatePlayers()
   {
-    // Blanche
-    Players[0] = new PlayerInfo();
-    Players[0].Player = Instantiate(playerPrefab, blancheLocation);
-    Players[0].PlayerStats = Players[0].Player.GetComponent<Character>();
-    Players[0].PlayerStats.CreateCharacter("Blanche", 80, 17, 30);
-    // Felemar
-    Players[1] = new PlayerInfo();
-    Players[1].Player = Instantiate(playerPrefab, felemarLocation);
-    Players[1].PlayerStats = Players[1].Player.GetComponent<Character>();
-    Players[1].PlayerStats.CreateCharacter("Felemar", 100, 17, 35);
-    // Lucian
-    Players[2] = new PlayerInfo();
-    Players[2].Player = Instantiate(playerPrefab, lucianLocation);
-    Players[2].PlayerStats = Players[2].Player.GetComponent<Character>();
-    Players[2].PlayerStats.CreateCharacter("Lucian", 120, 17, 30);
-    // Ruffles
-    Players[3] = new PlayerInfo();
-    Players[3].Player = Instantiate(playerPrefab, rufflesLocation);
-    Players[3].PlayerStats = Players[3].Player.GetComponent<Character>();
-    Players[3].PlayerStats.CreateCharacter("Ruffles", 90, 17, 30);
-    // Sully
-    Players[4] = new PlayerInfo();
-    Players[4].Player = Instantiate(playerPrefab, sullyLocation);
-    Players[4].PlayerStats = Players[4].Player.GetComponent<Character>();
-    Players[4].PlayerStats.CreateCharacter("Sully", 90, 17, 30);
+    for(int i = 0; i < 5; i++)
+    {
+      Players_GO[i] = Instantiate(Players_SO[i].playerPrefab, Players_SO[i].spawnPoint, Quaternion.identity);
+    }
   }
 
   void CreateEnemies()
   {
-    Enemy = Instantiate(enemyPrefab, enemyLocation);
-    EnemyStats = Enemy.GetComponent<Character>();
-    EnemyStats.CreateCharacter("Enemy", 80, 17, 30);
+    Enemies_GO[0] = Instantiate(Enemies_SO[0].enemyPrefab, Enemies_SO[0].spawnPoint, Quaternion.identity);
   }
 
   void PlayerTurn()
   {
-    Players[whosTurn].PlayerStats.NewRound();
-    UIScript.StartPlayerTurn(Players[whosTurn].PlayerStats);
+    Players_SO[whosTurn].NewRound();
+    UIScript.StartPlayerTurn(Players_SO[whosTurn]);
   }
 
   public void OnMoveButton()
   {
     if(state != BattleState.PLAYERTURN)
       return;
-    tileSetter.DsplMoveRange(Players[whosTurn].Player.transform.position, Players[whosTurn].PlayerStats.GetCurrentMovement());
+    tileSetter.DsplMoveRange(Players_GO[whosTurn].transform.position, Players_SO[whosTurn].currentMovement);
     StartCoroutine(ValidateMovement());
   }
 
@@ -119,8 +85,8 @@ public class GameManager : MonoBehaviour
         Vector3 tileCoord = cursor.currentTileCoord;
         if(tileCoord.x != -1) {
           // Get distance to move
-          float xDistance = tileCoord.x - Players[whosTurn].Player.transform.position.x;
-          float zDistance = tileCoord.z - Players[whosTurn].Player.transform.position.z;
+          float xDistance = tileCoord.x - Players_GO[whosTurn].transform.position.x;
+          float zDistance = tileCoord.z - Players_GO[whosTurn].transform.position.z;
           float distance;
           // Absolute value
           if(xDistance < 0) {
@@ -136,19 +102,20 @@ public class GameManager : MonoBehaviour
             distance = zDistance;
           }
           // check if that is in range
-          int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
+          int currentMovement = Players_SO[whosTurn].currentMovement;
           if(distance <= currentMovement) {
             // Move player
-            Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+            Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
             tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
-            Players[whosTurn].PlayerStats.Move(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), distance);
+            Players_SO[whosTurn].Move(distance);
+            StartCoroutine(MovePlayer(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), 20f));
             yield break;
           }
         }
       }
       if(Input.GetKeyDown(KeyCode.Escape)) {
-        int currentMovement = Players[whosTurn].PlayerStats.GetCurrentMovement();
-        Vector3 originPoint = (Players[whosTurn].Player.transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+        int currentMovement = Players_SO[whosTurn].currentMovement;
+        Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
         tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
         yield break;
       }
@@ -156,13 +123,31 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  public IEnumerator MovePlayer(Vector3 endPos, float speed)
+  {
+    while (Players_GO[whosTurn].transform.position != endPos)
+    {
+      Players_GO[whosTurn].transform.position = Vector3.MoveTowards(Players_GO[whosTurn].transform.position, endPos, speed * Time.deltaTime);
+      yield return new WaitForEndOfFrame ();
+    }
+  }
+
+  public IEnumerator MoveEnemy(Vector3 endPos, float speed)
+  {
+    while (Enemies_GO[0].transform.position != endPos)
+    {
+      Enemies_GO[0].transform.position = Vector3.MoveTowards(Enemies_GO[0].transform.position, endPos, speed * Time.deltaTime);
+      yield return new WaitForEndOfFrame ();
+    }
+  }
+
   public void OnEndTurnButton() {
     whosTurn++;
-    if(whosTurn == Players.Length) {
+    if(whosTurn == Players_SO.Length) {
       state = BattleState.ENEMYTURN;
-      StartCoroutine(EnemyTurn());
+      EnemyTurn();
     }
-    else if (whosTurn > Players.Length) {
+    else if (whosTurn > Players_SO.Length) {
       whosTurn = 0;
       state = BattleState.PLAYERTURN;
       PlayerTurn();
@@ -172,24 +157,25 @@ public class GameManager : MonoBehaviour
     }
   }
 
-  IEnumerator EnemyTurn()
+  // TODO: Either make enemy turn AI or give power over Enemy to DM
+  public void EnemyTurn()
   {
-    UIScript.StartEnemyTurn(EnemyStats);
-    yield return new WaitForSeconds(1);
+    UIScript.StartEnemyTurn(Enemies_SO[0]);
 
     // Move enemy
     float factor = 5f;
     float x = Mathf.Round(Random.Range(25, 85) / factor) * factor;
     float z = Mathf.Round(Random.Range(25, 105) / factor) * factor;
-    EnemyStats.Move(new Vector3(x, 2.5f, z), 0);
+    //TODO: Update enemy movement distance
+    Enemies_SO[0].Move(0.0f);
+    StartCoroutine(MoveEnemy(new Vector3(x, 2.5f, z), 20f));
 
     // Attack player
-    Players[(int)Mathf.Round(Random.Range(0, 5))].PlayerStats.TakeDamage(20);
+    Players_SO[(int)Mathf.Round(Random.Range(0, 5))].TakeDamage(20);
 
     // End enemy turn
     whosTurn = 0;
     state = BattleState.PLAYERTURN;
     PlayerTurn();
-    yield return null;
   }
 }
