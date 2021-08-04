@@ -1,3 +1,5 @@
+// TODO: Remove Players_GO from this file and keep it as the token in Players_SO
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +32,8 @@ public class GameManager : MonoBehaviour
     SetupBattle();
   }
 
+  // update and check state every frame to have correct response
+
   void SetupBattle()
   {
     CreateMap();
@@ -53,6 +57,7 @@ public class GameManager : MonoBehaviour
     for(int i = 0; i < 5; i++)
     {
       Players_GO[i] = Instantiate(Players_SO[i].playerPrefab, Players_SO[i].spawnPoint, Quaternion.identity);
+      Players_SO[i].token = Players_GO[i];
     }
   }
 
@@ -78,53 +83,38 @@ public class GameManager : MonoBehaviour
       return;
     UIScript.DeactivatePlayerHUD();
     tileSetter.DsplMoveRange(Players_GO[whosTurn].transform.position, Players_SO[whosTurn].currentMovement);
-    StartCoroutine(ValidateMovement());
+    cursor.Select(() => {
+      Vector3 tileCoord = cursor.selectedTileCoord;
+      int distance = ValidateMovement(tileCoord);
+      int currentMovement = Players_SO[whosTurn].currentMovement;
+      Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
+      tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
+      if(distance != -1)
+        Players_SO[whosTurn].Move(new Vector3(tileCoord.x, 2.5f, tileCoord.z), distance);
+      UIScript.ActivatePlayerHUD();
+    });
   }
 
-  IEnumerator ValidateMovement()
+  public int ValidateMovement(Vector3 tileCoord)
   {
-    while(true) {
-      if(Input.GetMouseButtonDown(0)) {
-        // If the cursor is on the map
-        Vector3 tileCoord = cursor.currentTileCoord;
-        if(tileCoord.x != -1) {
-          // Get distance to move
-          float xDistance = tileCoord.x - Players_GO[whosTurn].transform.position.x;
-          float zDistance = tileCoord.z - Players_GO[whosTurn].transform.position.z;
-          float distance;
-          // Absolute value
-          if(xDistance < 0) {
-            xDistance = xDistance * -1;
-          }
-          if(zDistance < 0) {
-            zDistance = zDistance * -1;
-          }
-          if(xDistance > zDistance) {
-            distance = xDistance;
-          }
-          else {
-            distance = zDistance;
-          }
-          // check if that is in range
-          int currentMovement = Players_SO[whosTurn].currentMovement;
-          if(distance <= currentMovement) {
-            // Move player
-            Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
-            tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
-            Players_SO[whosTurn].Move(distance);
-            yield return StartCoroutine(MovePlayer(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), 20f));
-          }
-        }
-      }
-      if(Input.GetKeyDown(KeyCode.Escape)) {
-        int currentMovement = Players_SO[whosTurn].currentMovement;
-        Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
-        tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
-        UIScript.ActivatePlayerHUD();
-        yield break;
-      }
-      yield return null;
-    }
+    float xDistance = tileCoord.x - Players_GO[whosTurn].transform.position.x;
+    float zDistance = tileCoord.z - Players_GO[whosTurn].transform.position.z;
+    float distance;
+    // Absolute value
+    if(xDistance < 0)
+      xDistance = xDistance * -1;
+    if(zDistance < 0)
+      zDistance = zDistance * -1;
+    // Distance = furthest direction, x or z
+    if(xDistance > zDistance)
+      distance = xDistance;
+    else
+      distance = zDistance;
+    // check if that is in range for player speed
+    int currentMovement = Players_SO[whosTurn].currentMovement;
+    if(distance <= currentMovement)
+      return (int)distance;
+    return -1;
   }
 
   public IEnumerator MovePlayer(Vector3 endPos, float speed)
@@ -167,17 +157,17 @@ public class GameManager : MonoBehaviour
   public void EnemyTurn()
   {
     UIScript.StartEnemyTurn(Enemies_SO[0]);
-    
+
     // Move enemy
     float factor = 5f;
-    float x = Mathf.Round(Random.Range(25, 85) / factor) * factor;
-    float z = Mathf.Round(Random.Range(25, 105) / factor) * factor;
+    float x = Mathf.Round(UnityEngine.Random.Range(25, 85) / factor) * factor;
+    float z = Mathf.Round(UnityEngine.Random.Range(25, 105) / factor) * factor;
     //TODO: Update enemy movement distance
     Enemies_SO[0].Move(0.0f);
     StartCoroutine(MoveEnemy(new Vector3(x, 2.5f, z), 20f));
 
     // Attack player
-    Players_SO[(int)Mathf.Round(Random.Range(0, 5))].TakeDamage(20);
+    Players_SO[(int)Mathf.Round(UnityEngine.Random.Range(0, 5))].TakeDamage(20);
 
     // End enemy turn
     whosTurn = 0;

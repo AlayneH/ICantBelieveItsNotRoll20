@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5772896040899425992}
   - component: {fileID: 5356354231688411831}
   - component: {fileID: -807830287151503883}
+  - component: {fileID: 5113646311023793288}
   m_Layer: 0
   m_Name: Blanche
   m_TagString: Untagged
@@ -107,3 +108,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: []
+--- !u!114 &5113646311023793288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2828170116944561546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6358dbd698e1e94f856ab6e04ca4c5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

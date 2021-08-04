@@ -1,6 +1,5 @@
 // TODO: Either change move to be a path instead of a point, or implement pathfinding here
 // Preferably the first option so that the charcter doesn't know information about the map
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

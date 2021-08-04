@@ -2,7 +2,8 @@
 // TODO: Add a character class for Player and Enemy overlap
   // Attack parameter will then be any character so that players can attack players as well
   // Not urgent, but it will help with coding convention and possible expansions
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,8 +31,10 @@ public class Player : ScriptableObject
   public Vector3 spawnPoint;
   public GameObject playerPrefab;
   public List<Item> inventory;
+  public GameObject token;
 
   /* Applys damage to this player
+   * Parameters: int dmg - the damage to be applied to this player
    * Returns: True if the damage knocks the player unconcious
    *          False, otherwise
    */
@@ -47,8 +50,11 @@ public class Player : ScriptableObject
    * Returns: True if the player is now out of movement
    *          False, otherwise
    */
-  public bool Move(float distance)
+  public bool Move(Vector3 targetPosition, float distance)
   {
+    token.GetComponent<PlayerToken>().MoveToPosition(targetPosition, () => {
+
+    });
     currentMovement = currentMovement - (int)distance;
     if(currentMovement == 0)
       return true;
@@ -66,6 +72,10 @@ public class Player : ScriptableObject
     // Roll To Hit?
   }
 
+  /* Attacks an enemy
+   * Parameters: Enemy targetEnemy - the enemy being attacked
+   * Returns: The total damage the enemy took, 0 implies a missed attack
+   */
   public int Attack(Enemy targetEnemy)
   {
     int atkRoll = ToHit();
@@ -76,7 +86,6 @@ public class Player : ScriptableObject
       targetEnemy.TakeDamage(damage);
     }
     return damage;
-    // TODO: else visualy indicate the attack missed and continue
   }
 
   // TODO: Implement adv and disadv

@@ -1,6 +1,6 @@
 // TODO: Hide cursor when mouse hovers over button
 // Do not allow the user to move to a tile under the buttons when they are hovered over the button
-
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,17 +9,31 @@ using UnityEngine;
 public class TileMapMouse : MonoBehaviour {
   TDMap _tileMap;
   public Vector3 currentTileCoord;
+  public Vector3 selectedTileCoord;
   public GameObject selection;
-//  private int range = 30;
+  private State state;
+  private Action OnSelectComplete;
+  private enum State {Idle, Listening}
 
   void Start() {
     // C# standard, _[variableName] indicates that the object it a private variable
     _tileMap = GetComponent<TDMap>();
+    state = State.Idle;
   }
 
   void Update() {
     GetPosition();
     selection.transform.position = currentTileCoord;
+    if(state == State.Listening) {
+      if(Input.GetMouseButtonDown(0)) {
+        if(currentTileCoord.x != -1)
+        {
+          selectedTileCoord = currentTileCoord;
+          state = State.Idle;
+          OnSelectComplete();
+        }
+      }
+    }
   }
 
   public void GetPosition() {
@@ -42,5 +56,11 @@ public class TileMapMouse : MonoBehaviour {
       currentTileCoord.y = .1f;
       currentTileCoord.z = -1f;
     }
+  }
+
+  public void Select(Action OnSelectComplete)
+  {
+    this.OnSelectComplete = OnSelectComplete;
+    state = State.Listening;
   }
 }
