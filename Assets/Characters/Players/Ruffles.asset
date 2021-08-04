@@ -24,6 +24,9 @@ MonoBehaviour:
   intelligence: 11
   wisdom: 18
   charisma: 12
+  profBonus: 4
   spawnPoint: {x: 45, y: 2.5, z: 30}
   playerPrefab: {fileID: 2828170116944561546, guid: 76f3055ec3c59ec4188b67d34f303f56,
     type: 3}
+  inventory:
+  - {fileID: 11400000, guid: 818e4cde9a6a17c47a1a17130937d8e7, type: 2}

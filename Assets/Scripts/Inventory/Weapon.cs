@@ -18,13 +18,17 @@ public enum DamageType {none, acid, bludgeoning, cold, fire, force, lightning, n
 
   }
 
+  public override int Use() {
+    return CalcDamage();
+  }
+
   // Calculate Damage
   public int CalcDamage() {
     int totalDamage = 0;
     // Roll dice
     System.Random r = new System.Random();
     for(int i = 1; i <= numDice; i++) {
-      totalDamage = totalDamage + r.Next(1, diceType);
+      totalDamage = totalDamage + r.Next(1, diceType+1);
     }
     // Add modifiers
     totalDamage = totalDamage + dmgMod;

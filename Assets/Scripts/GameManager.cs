@@ -1,6 +1,3 @@
-// TODO: Remove button pressing calabilities while player and enemy actions/movements are playing out
-// BUG: If player 1 starts to move, then ends turn before movement is finished, then player 2 will finish the movement
-// TODO: Make visual range of movement use character values, not hard coded numbers
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -70,15 +67,22 @@ public class GameManager : MonoBehaviour
     UIScript.StartPlayerTurn(Players_SO[whosTurn]);
   }
 
+  public void OnAttackButton()
+  {
+    Debug.Log(Players_SO[whosTurn].Attack(Enemies_SO[0]));
+  }
+
   public void OnMoveButton()
   {
     if(state != BattleState.PLAYERTURN)
       return;
+    UIScript.DeactivatePlayerHUD();
     tileSetter.DsplMoveRange(Players_GO[whosTurn].transform.position, Players_SO[whosTurn].currentMovement);
     StartCoroutine(ValidateMovement());
   }
 
-  IEnumerator ValidateMovement() {
+  IEnumerator ValidateMovement()
+  {
     while(true) {
       if(Input.GetMouseButtonDown(0)) {
         // If the cursor is on the map
@@ -108,8 +112,7 @@ public class GameManager : MonoBehaviour
             Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
             tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
             Players_SO[whosTurn].Move(distance);
-            StartCoroutine(MovePlayer(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), 20f));
-            yield break;
+            yield return StartCoroutine(MovePlayer(new Vector3(cursor.currentTileCoord.x, 2.5f, cursor.currentTileCoord.z), 20f));
           }
         }
       }
@@ -117,6 +120,7 @@ public class GameManager : MonoBehaviour
         int currentMovement = Players_SO[whosTurn].currentMovement;
         Vector3 originPoint = (Players_GO[whosTurn].transform.position / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
         tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
+        UIScript.ActivatePlayerHUD();
         yield break;
       }
       yield return null;
@@ -130,6 +134,7 @@ public class GameManager : MonoBehaviour
       Players_GO[whosTurn].transform.position = Vector3.MoveTowards(Players_GO[whosTurn].transform.position, endPos, speed * Time.deltaTime);
       yield return new WaitForEndOfFrame ();
     }
+    UIScript.ActivatePlayerHUD();
   }
 
   public IEnumerator MoveEnemy(Vector3 endPos, float speed)
@@ -141,7 +146,8 @@ public class GameManager : MonoBehaviour
     }
   }
 
-  public void OnEndTurnButton() {
+  public void OnEndTurnButton()
+  {
     whosTurn++;
     if(whosTurn == Players_SO.Length) {
       state = BattleState.ENEMYTURN;
@@ -161,7 +167,7 @@ public class GameManager : MonoBehaviour
   public void EnemyTurn()
   {
     UIScript.StartEnemyTurn(Enemies_SO[0]);
-
+    
     // Move enemy
     float factor = 5f;
     float x = Mathf.Round(Random.Range(25, 85) / factor) * factor;

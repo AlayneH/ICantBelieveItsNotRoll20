@@ -2,11 +2,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
   public GameObject BattleHUD;
   public GameObject PlayerHUD;
+  public Button MoveButton;
+  public Button EndButton;
+  public Button AttackButton;
   public PlayerHUD PlayerScript;
 
   void Start()
@@ -24,6 +28,7 @@ public class UIManager : MonoBehaviour
   {
     PlayerHUD.SetActive(true);
     PlayerScript.SetHUD(Player.charName, Player.currentHP, Player.maxHP);
+    MoveButton.interactable = true;
   }
 
   public void StartEnemyTurn(Enemy Enemy)
@@ -35,5 +40,19 @@ public class UIManager : MonoBehaviour
   public void AttackPlayer(Player Player)
   {
     PlayerScript.UpdateHP(Player.currentHP, Player.maxHP);
+  }
+
+  public void ActivatePlayerHUD()
+  {
+    MoveButton.interactable = true;
+    EndButton.interactable = true;
+    AttackButton.interactable = true;
+  }
+
+  public void DeactivatePlayerHUD()
+  {
+    MoveButton.interactable = false;
+    EndButton.interactable = false;
+    AttackButton.interactable = false;
   }
 }

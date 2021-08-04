@@ -19,11 +19,13 @@ MonoBehaviour:
   maxMovement: 30
   currentMovement: 30
   strength: 10
-  dexterity: 20
+  dexterity: 15
   constitution: 14
   intelligence: 11
   wisdom: 18
   charisma: 12
+  profBonus: 4
   spawnPoint: {x: 30, y: 2.5, z: 30}
   playerPrefab: {fileID: 2828170116944561546, guid: 66ab71ec8e25a3743bb49443754bccc0,
     type: 3}
+  inventory: []

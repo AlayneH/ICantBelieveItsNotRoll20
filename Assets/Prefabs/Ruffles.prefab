@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 9162813838045177753}
   - component: {fileID: 5772896040899425992}
   - component: {fileID: 5356354231688411831}
-  - component: {fileID: 2889800447860013369}
   - component: {fileID: -807830287151503883}
   m_Layer: 0
   m_Name: Ruffles
@@ -95,20 +94,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2889800447860013369
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828170116944561546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b13579f54555d3b4a94f84e61812bb8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  charName: 
-  playerStats: {fileID: 11400000, guid: d6eda7b748a594a4887859c9d2a94b64, type: 2}
 --- !u!114 &-807830287151503883
 MonoBehaviour:
   m_ObjectHideFlags: 0

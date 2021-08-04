@@ -16,14 +16,13 @@ using UnityEngine;
   public int maxMovement;
   public int currentMovement;
 
-  // public class Stats {
-  //   int strength;
-  //   int dexterity;
-  //   int constitution;
-  //   int intelligence;
-  //   int wisdom;
-  //   int charisma;
-  // }
+  public int strength;
+  public int dexterity;
+  public int constitution;
+  public int intelligence;
+  public int wisdom;
+  public int charisma;
+
   public Vector3 spawnPoint;
   public GameObject enemyPrefab;
   // Inventory
@@ -48,6 +47,13 @@ using UnityEngine;
   {
     currentHP = currentHP - dmg;
     if(currentHP <= 0)
+      return true;
+    return false;
+  }
+
+  public bool CheckHit(int atkRoll)
+  {
+    if(atkRoll >= AC)
       return true;
     return false;
   }

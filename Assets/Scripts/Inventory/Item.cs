@@ -14,8 +14,9 @@ public class Item : ScriptableObject {
     // This function may be overridden
   }
 
-  public virtual void Use() {
+  public virtual int Use() {
     // This function will be overriden
+    return 0;
   }
 
   public virtual void Drop() {
