@@ -15,7 +15,6 @@ public class UIManager : MonoBehaviour
   GameObject testHUD;
   List<GameObject> PlayerHUDs;
 
-
   void Start()
   {
     PlayerHUDs = new List<GameObject>();
@@ -40,33 +39,5 @@ public class UIManager : MonoBehaviour
   {
     PlayerHUDs[current].SetActive(true);
     PlayerHUDs[previous].SetActive(false);
-  }
-
-  // public void StartEnemyTurn(Enemy Enemy)
-  // {
-  //   //PlayerHUD.SetActive(true);
-  //   //PlayerScript.SetHUD(Enemy.charName, Enemy.currentHP, Enemy.maxHP);
-  //   PlayerHUDs[whosTurn].SetActive(true);
-  // }
-
-  // public void AttackPlayer(Player Player)
-  // {
-  //   PlayerScript.UpdateHP(Player.currentHP, Player.maxHP);
-  // }
-
-  public void ActivatePlayerHUD()
-  {
-    // MoveButton.interactable = true;
-    // EndButton.interactable = true;
-    // AttackButton.interactable = true;
-    Debug.Log("");
-  }
-
-  public void DeactivatePlayerHUD()
-  {
-    // MoveButton.interactable = false;
-    // EndButton.interactable = false;
-    // AttackButton.interactable = false;
-    Debug.Log("");
   }
 }

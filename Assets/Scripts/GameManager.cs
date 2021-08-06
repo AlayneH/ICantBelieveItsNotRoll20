@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
   public BattleState state;
   public GameObject UIManager;
   public Player[] Players_SO;
-  public GameObject[] Players_GO = new GameObject[5];
   public Enemy[] Enemies_SO;
   public GameObject[] Enemies_GO = new GameObject[1];
   // player index is in alphabetical order for now
@@ -63,8 +62,7 @@ public class GameManager : MonoBehaviour
       Vector3 spawnPoint = Players_SO[i].spawnPoint;
       int x = (int)(spawnPoint.x-5/5);
       int z = (int)(spawnPoint.z-5/5);
-      Players_GO[i] = Instantiate(Players_SO[i].playerPrefab, Players_SO[i].spawnPoint, Quaternion.identity);
-      Players_SO[i].token = Players_GO[i];
+      Players_SO[i].token = Instantiate(Players_SO[i].playerPrefab, Players_SO[i].spawnPoint, Quaternion.identity);
       // Set up HealthSystem and HUD
       GameObject hudInstance = UIScript.SpawnPlayerHUD(i);
       Players_SO[i].Setup(new HealthSystem(), hudInstance.GetComponent<PlayerHUD>());
@@ -80,7 +78,6 @@ public class GameManager : MonoBehaviour
   void PlayerTurn()
   {
     Players_SO[whosTurn].NewRound();
-    Debug.Log(Players_SO[whosTurn].charName + "'s turn");
     int previous = whosTurn-1;
     if(previous < 0)
       previous = 4;
@@ -89,58 +86,70 @@ public class GameManager : MonoBehaviour
 
   public void OnAttackButton()
   {
-    if(state != BattleState.PLAYERTURN)
-      return;
-    UIScript.DeactivatePlayerHUD();
+    Vector3 curLocation = Players_SO[whosTurn].token.transform.position;
     // Get weapon range
     int range = Players_SO[whosTurn].GetAtkRange();
     // Display Range
-    tileSetter.DsplRange(Players_SO[whosTurn].token.transform.position, range, 1);
-    // Select Enemy
+    tileSetter.DsplRange(curLocation, range, 1);
+    // Select a tile to attack
     cursor.Select(() => {
       Vector3 tileCoord = cursor.selectedTileCoord;
-      // if an enemy was selected
-      if(map.GetComponent<TDMap>().GetOccupant((int)((tileCoord.x-5)/5), (int)((tileCoord.z-5)/5)) == 2) {
-        // Attack enemy
-        int damage = Players_SO[whosTurn].Attack(Enemies_SO[0]);
-        Debug.Log(damage);
-      }
       // if selection is in range
-
-      tileSetter.ResetTexture(range, range, Players_SO[whosTurn].token.transform.position);
-      UIScript.ActivatePlayerHUD();
+      float xDistance = tileCoord.x - curLocation.x;
+      float zDistance = tileCoord.z - curLocation.z;
+      float distance;
+      // Absolute value
+      if(xDistance < 0)
+        xDistance = xDistance * -1;
+      if(zDistance < 0)
+        zDistance = zDistance * -1;
+      // Distance = furthest direction, x or z
+      if(xDistance > zDistance)
+        distance = xDistance;
+      else
+        distance = zDistance;
+      // check if that is in attack range
+      if(distance <= range){
+        // if an enemy was selected
+        if(map.GetComponent<TDMap>().GetOccupant((int)((tileCoord.x-5)/5), (int)((tileCoord.z-5)/5)) == 2) {
+          // Attack enemy
+          int damage = Players_SO[whosTurn].Attack(Enemies_SO[0]);
+          Debug.Log(damage);
+        }
+      }   
+      // Remove range visual
+      Vector3 originPoint = (curLocation / 5f) - new Vector3(range/5 + 1, 0, range/5 + 1);
+      tileSetter.ResetTexture(range*2/5 + 1, range*2/5 + 1, originPoint);
     });
   }
 
   public void OnMoveButton()
   {
-    Debug.Log("Move Clicked");
-    if(state != BattleState.PLAYERTURN)
-      return;
-    UIScript.DeactivatePlayerHUD();
-    Vector3 curLocation = Players_GO[whosTurn].transform.position;
-    // Debug.Log(map.GetComponent<TDMap>().GetOccupant(5, 5));
-    // map.GetComponent<TDMap>().SetOccupant((int)((curLocation.x-5)/5), (int)((curLocation.z-5)/5), 0);
-
-    tileSetter.DsplRange(curLocation, Players_SO[whosTurn].currentMovement, 0);
+    Vector3 curLocation = Players_SO[whosTurn].token.transform.position;
+    int currentMovement = Players_SO[whosTurn].currentMovement;
+    // Show movement range
+    tileSetter.DsplRange(curLocation, currentMovement, 0);
+    // Select a tile to move to
     cursor.Select(() => {
-      map.GetComponent<TDMap>().SetOccupant((int)((curLocation.x-5)/5), (int)((curLocation.z-5)/5), 0);
+      // Valicate Movement
       Vector3 tileCoord = cursor.selectedTileCoord;
       int distance = ValidateMovement(tileCoord);
-      int currentMovement = Players_SO[whosTurn].currentMovement;
+      // If distance is valid, move
+      if(distance != -1) {
+        map.GetComponent<TDMap>().SetOccupant((int)((curLocation.x-5)/5), (int)((curLocation.z-5)/5), 0);
+        Players_SO[whosTurn].Move(new Vector3(tileCoord.x, 2.5f, tileCoord.z), distance);
+        map.GetComponent<TDMap>().SetOccupant((int)((tileCoord.x-5)/5), (int)((tileCoord.z-5)/5), 1);
+      }
+      // Remove range visual
       Vector3 originPoint = (curLocation / 5f) - new Vector3(currentMovement/5 + 1, 0, currentMovement/5 + 1);
       tileSetter.ResetTexture(currentMovement*2/5 + 1, currentMovement*2/5 + 1, originPoint);
-      if(distance != -1)
-        Players_SO[whosTurn].Move(new Vector3(tileCoord.x, 2.5f, tileCoord.z), distance);
-      UIScript.ActivatePlayerHUD();
-      map.GetComponent<TDMap>().SetOccupant((int)((tileCoord.x-5)/5), (int)((tileCoord.z-5)/5), 1);
     });
   }
 
   public int ValidateMovement(Vector3 tileCoord)
   {
-    float xDistance = tileCoord.x - Players_GO[whosTurn].transform.position.x;
-    float zDistance = tileCoord.z - Players_GO[whosTurn].transform.position.z;
+    float xDistance = tileCoord.x - Players_SO[whosTurn].token.transform.position.x;
+    float zDistance = tileCoord.z - Players_SO[whosTurn].token.transform.position.z;
     float distance;
     // Absolute value
     if(xDistance < 0)
