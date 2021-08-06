@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Shade
   maxHP: 250
-  currentHP: 250
+  currentHP: 232
   AC: 18
   maxMovement: 40
   currentMovement: 40

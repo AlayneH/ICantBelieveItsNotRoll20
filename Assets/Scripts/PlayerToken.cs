@@ -9,7 +9,7 @@ public class PlayerToken : MonoBehaviour
   private Vector3 targetPosition;
   private Action OnMoveComplete;
 
-  private enum State {Idle, Busy, Moving}
+  private enum State {Idle, Moving}
   // Start is called before the first frame update
   void Start()
   {
@@ -25,7 +25,8 @@ public class PlayerToken : MonoBehaviour
       case State.Moving:
         float moveSpeed = 5f;
         transform.position += (targetPosition - GetPosition()) * moveSpeed * Time.deltaTime;
-        if(Vector3.Distance(GetPosition(), targetPosition) <= .2f) {
+        if(Vector3.Distance(GetPosition(), targetPosition) <= .2f)
+        {
           transform.position = targetPosition;
           state = State.Idle;
           OnMoveComplete();

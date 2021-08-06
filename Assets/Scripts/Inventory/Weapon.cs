@@ -35,7 +35,7 @@ public enum DamageType {none, acid, bludgeoning, cold, fire, force, lightning, n
     return totalDamage;
   }
 
-  public int GetRange() {
+  public override int GetRange() {
     return range;
   }
 

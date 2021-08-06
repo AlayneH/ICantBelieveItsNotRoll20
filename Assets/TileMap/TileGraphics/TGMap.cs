@@ -11,7 +11,7 @@ public class TGMap : MonoBehaviour {
 
 	public Texture2D terrainTiles;
 	public int tileResolution;
-	TDMap map;
+	public TDMap map;
 	Texture2D texture;
 	Color[][] tiles;
 
@@ -117,10 +117,11 @@ public class TGMap : MonoBehaviour {
 		BuildTexture();
   }
 
-	public void DsplMoveRange(Vector3 charLocation, int charSpeed) {
-		Vector3 originPoint = (charLocation / 5f) - new Vector3(charSpeed/5 + 1, 0, charSpeed/5 + 1);
-		SetTexture(charSpeed*2/5 + 1, charSpeed*2/5 + 1, 0, originPoint);
+	public void DsplRange(Vector3 centerPoint, int range, int color) {
+		Vector3 originPoint = (centerPoint / 5f) - new Vector3(range/5 + 1, 0, range/5 + 1);
+		SetTexture(range*2/5 + 1, range*2/5 + 1, color, originPoint);
 	}
+
 
 	void SetTexture(int xRange, int yRange, int type, Vector3 originPoint) {
 		int xStart = (int)originPoint.x;
@@ -174,5 +175,15 @@ public class TGMap : MonoBehaviour {
 		texture.Apply();
 		MeshRenderer mesh_renderer = GetComponent<MeshRenderer>();
 		mesh_renderer.sharedMaterials[0].mainTexture = texture;
+	}
+
+
+	// TODO: Look into which is better map.GetComponent<TDMap>() or tileSetter.OccupySpace() for GameManger
+	public void OccupySpace(int x, int y, int occupant)	{
+		map.SetOccupant(x, y, occupant);
+	}
+
+	public int GetOccupant(int x, int y) {
+		return map.GetOccupant(x, y);
 	}
 }

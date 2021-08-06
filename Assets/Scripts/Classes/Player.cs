@@ -1,5 +1,6 @@
 // TODO: Update returned values in GameManager to reflect the return values in TakeDamage and Move
 // TODO: Add a character class for Player and Enemy overlap
+// TODO: If this expands into more than one fight, Player spawn Setup needs to save health between battles
   // Attack parameter will then be any character so that players can attack players as well
   // Not urgent, but it will help with coding convention and possible expansions
 ﻿using System;
@@ -13,7 +14,6 @@ public class Player : ScriptableObject
 {
   public string charName;
   public int maxHP;
-  public int currentHP;
   public int AC;
   public int maxMovement;
   public int currentMovement;
@@ -33,6 +33,22 @@ public class Player : ScriptableObject
   public List<Item> inventory;
   public GameObject token;
 
+  private HealthSystem healthSystem;
+  private PlayerHUD HUD;
+
+  /* Setup
+   * Called by the GameManager when the Player first spawns
+   * Battle is started as if the Player just took a long rest
+   */
+  public void Setup(HealthSystem healthSystem, PlayerHUD HUD)
+  {
+    this.HUD = HUD;
+    this.healthSystem = healthSystem;
+    HUD.Setup(healthSystem, charName);
+    healthSystem.ChangeHealthMax(maxHP, true);
+    currentMovement = maxMovement;
+  }
+
   /* Applys damage to this player
    * Parameters: int dmg - the damage to be applied to this player
    * Returns: True if the damage knocks the player unconcious
@@ -40,8 +56,8 @@ public class Player : ScriptableObject
    */
   public bool TakeDamage(int dmg)
   {
-    currentHP = currentHP - dmg;
-    if(currentHP <= 0)
+    healthSystem.Damage(dmg);
+    if(healthSystem.GetHealth() <= 0)
       return true;
     return false;
   }
@@ -98,6 +114,12 @@ public class Player : ScriptableObject
     // add modifiers
     total = total + profBonus + (dexterity-10)/2;
     return total;
+  }
+
+  public int GetAtkRange()
+  {
+    int range = inventory[0].GetRange();
+    return range;
   }
 
   public void NewRound()

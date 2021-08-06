@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sully
   m_EditorClassIdentifier: 
   charName: Sully
-  maxHP: 89
-  currentHP: 69
+  maxHP: 90
+  currentHP: 9
   AC: 17
   maxMovement: 30
   currentMovement: 30
@@ -28,4 +28,6 @@ MonoBehaviour:
   spawnPoint: {x: 50, y: 2.5, z: 30}
   playerPrefab: {fileID: 2828170116944561546, guid: 2e1872c469a660348b562b0f57f4cf8a,
     type: 3}
-  inventory: []
+  inventory:
+  - {fileID: 11400000, guid: 996456b16a689e444a4179666173961e, type: 2}
+  token: {fileID: 0}

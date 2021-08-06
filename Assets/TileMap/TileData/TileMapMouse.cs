@@ -30,6 +30,7 @@ public class TileMapMouse : MonoBehaviour {
         {
           selectedTileCoord = currentTileCoord;
           state = State.Idle;
+          Debug.Log("Tile selected");
           OnSelectComplete();
         }
       }

@@ -29,4 +29,5 @@ MonoBehaviour:
   playerPrefab: {fileID: 2828170116944561546, guid: 76f3055ec3c59ec4188b67d34f303f56,
     type: 3}
   inventory:
-  - {fileID: 11400000, guid: 818e4cde9a6a17c47a1a17130937d8e7, type: 2}
+  - {fileID: 11400000, guid: d6ae0b3aaefc8154ebd87216bf468535, type: 2}
+  token: {fileID: 0}

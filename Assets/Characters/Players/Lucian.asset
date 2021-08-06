@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Lucian
   maxHP: 89
-  currentHP: 89
+  currentHP: 69
   AC: 17
   maxMovement: 30
-  currentMovement: 30
+  currentMovement: 0
   strength: 10
   dexterity: 20
   constitution: 14
@@ -28,4 +28,6 @@ MonoBehaviour:
   spawnPoint: {x: 40, y: 2.5, z: 30}
   playerPrefab: {fileID: 2828170116944561546, guid: 2e05b3d9bdc16dc499d15e6c861448a0,
     type: 3}
-  inventory: []
+  inventory:
+  - {fileID: 11400000, guid: 76c97656b82b2e042b6430dc7c62a339, type: 2}
+  token: {fileID: 0}

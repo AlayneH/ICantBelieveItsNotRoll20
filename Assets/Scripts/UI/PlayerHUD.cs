@@ -7,15 +7,18 @@ public class PlayerHUD : MonoBehaviour
 {
   public TextMeshProUGUI nameText;
   public TextMeshProUGUI HPText;
+  private HealthSystem healthSystem;
 
-  public void SetHUD(string charName, int currentHP, int maxHP)
+  public void Setup(HealthSystem healthSystem, string nameText)
   {
-    nameText.text = charName;
-    UpdateHP(currentHP, maxHP);
+    this.nameText.text = nameText;
+    this.healthSystem = healthSystem;
+    HPText.text = "HP: " + healthSystem.GetHealth() + "/" + healthSystem.GetMaxHealth();
+    healthSystem.OnHealthChanged += HS_OnHealthChanged;
   }
 
-  public void UpdateHP(int currentHP, int maxHP)
+  private void HS_OnHealthChanged(object sender, System.EventArgs e)
   {
-    HPText.text = "HP: " + currentHP + "/" + maxHP;
+    HPText.text = "HP: " + healthSystem.GetHealth() + "/" + healthSystem.GetMaxHealth();
   }
 }

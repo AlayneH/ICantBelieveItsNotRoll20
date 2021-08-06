@@ -22,4 +22,9 @@ public class Item : ScriptableObject {
   public virtual void Drop() {
     // This function can be overridden if further functionality is needed
   }
+
+  public virtual int GetRange() {
+    // This function will be overriden
+    return 0;
+  }
 }

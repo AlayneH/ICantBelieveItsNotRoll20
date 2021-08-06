@@ -5,7 +5,8 @@ using UnityEngine;
 public class Tile
 {
   public List<Tile> neighbours;
-  public int type; // This value determines the texture of the tile. Eventually implement a 0-X = unwalkable, X-Y = half speed, Y-Z = normal speed
+  public int texture; // This value determines the texture of the tile. Eventually implement a 0-X = unwalkable, X-Y = half speed, Y-Z = normal speed
+  public int occupant; // This value holds what occupies this space 0 = nothing, 1 = player, 2 = enemy, 3 = other
   public int x;
   public int y;
 
@@ -20,9 +21,14 @@ public class Tile
     SetCoords(x, y);
   }
 
-  public void SetType(int type)
+  public void SetTexture(int texture)
   {
-    this.type = type;
+    this.texture = texture;
+  }
+
+  public void SetOccupant(int occupant)
+  {
+    this.occupant = occupant;
   }
 
   public void SetCoords(int x, int y)

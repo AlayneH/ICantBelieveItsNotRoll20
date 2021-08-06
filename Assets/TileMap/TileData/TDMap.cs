@@ -18,21 +18,18 @@ public class TDMap: MonoBehaviour {
     for(int x=0; x < size_x; x++) {
 			for(int y=0; y < size_y; y++) {
         tiles[x,y] = new Tile(x, y);
-        int random = Random.Range(0, 100);
-        if(random < 60) {
-          tiles[x,y].SetType(2);
-        }
-        else if(random < 75) {
-          tiles[x,y].SetType(0);
-        }
-        else if(random < 90) {
-          tiles[x,y].SetType(3);
-        }
-        else {
-          tiles[x,y].SetType(1);
-        }
+        tiles[x,y].SetTexture(2);
+        tiles[x,y].SetOccupant(0);
       }
     }
+
+    // Hard coded charcater spawn locations
+    tiles[5,5].SetOccupant(1);
+    tiles[6,5].SetOccupant(1);
+    tiles[7,5].SetOccupant(1);
+    tiles[8,5].SetOccupant(1);
+    tiles[9,5].SetOccupant(1);
+    tiles[9,9].SetOccupant(2);
 
     // Calculate neighbours
     for(int x=0; x < size_x; x++) {
@@ -66,11 +63,19 @@ public class TDMap: MonoBehaviour {
   }
 
   public int GetTile(int x, int y) {
-    return tiles[x,y].type;
+    return tiles[x,y].texture;
   }
 
-  public void SetTile(int x, int y, int type) {
-    tiles[x,y].type = type;
+  public void SetTile(int x, int y, int texture) {
+    tiles[x,y].texture = texture;
+  }
+
+  public int GetOccupant(int x, int y) {
+    return tiles[x,y].occupant;
+  }
+
+  public void SetOccupant(int x, int y, int occupant) {
+    tiles[x,y].occupant = occupant;
   }
 
   public void ShortestPathTo(int x, int y) {
