@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
 {
   public GameObject BattleHUD;
   public GameObject PlayerHUD_PF;
+  public GameObject StartState;
+  public GameObject ActionState;
   GameObject testHUD;
   List<GameObject> PlayerHUDs;
 
@@ -39,5 +41,18 @@ public class UIManager : MonoBehaviour
   {
     PlayerHUDs[current].SetActive(true);
     PlayerHUDs[previous].SetActive(false);
+    StartUI();
+  }
+
+  public void StartUI()
+  {
+    StartState.SetActive(true);
+    ActionState.SetActive(false);
+  }
+
+  public void ActionUI()
+  {
+    StartState.SetActive(false);
+    ActionState.SetActive(true);
   }
 }

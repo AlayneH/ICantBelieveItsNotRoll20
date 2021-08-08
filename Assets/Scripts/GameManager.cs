@@ -1,7 +1,9 @@
-// TODO: Remove Players_GO from this file and keep it as the token in Players_SO
 // TODO: Look into which is better map.GetComponent<TDMap>() or tileSetter.OccupySpace()
 // TODO: Character's currently load faster than the map, which is fine, but if I ever implement gravity thats a problem
   // This also means that the tile occupant can't be set as character's spawn, so that value is currently hard coded in
+
+// TODO: Back button for Action State
+// TODO: 1 action per turn, then deactivate action
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -84,6 +86,12 @@ public class GameManager : MonoBehaviour
     UIScript.StartPlayerTurn(whosTurn, previous);
   }
 
+  public void OnActionButton()
+  {
+    // Change UI State
+    UIScript.ActionUI();
+  }
+
   public void OnAttackButton()
   {
     Vector3 curLocation = Players_SO[whosTurn].token.transform.position;
@@ -94,29 +102,17 @@ public class GameManager : MonoBehaviour
     // Select a tile to attack
     cursor.Select(() => {
       Vector3 tileCoord = cursor.selectedTileCoord;
-      // if selection is in range
-      float xDistance = tileCoord.x - curLocation.x;
-      float zDistance = tileCoord.z - curLocation.z;
-      float distance;
-      // Absolute value
-      if(xDistance < 0)
-        xDistance = xDistance * -1;
-      if(zDistance < 0)
-        zDistance = zDistance * -1;
-      // Distance = furthest direction, x or z
-      if(xDistance > zDistance)
-        distance = xDistance;
-      else
-        distance = zDistance;
-      // check if that is in attack range
-      if(distance <= range){
+      // Check range
+      int distance = ValidateRange(tileCoord, Players_SO[whosTurn].token.transform.position, range);
+
+      if(distance != -1){
         // if an enemy was selected
         if(map.GetComponent<TDMap>().GetOccupant((int)((tileCoord.x-5)/5), (int)((tileCoord.z-5)/5)) == 2) {
           // Attack enemy
           int damage = Players_SO[whosTurn].Attack(Enemies_SO[0]);
           Debug.Log(damage);
         }
-      }   
+      }
       // Remove range visual
       Vector3 originPoint = (curLocation / 5f) - new Vector3(range/5 + 1, 0, range/5 + 1);
       tileSetter.ResetTexture(range*2/5 + 1, range*2/5 + 1, originPoint);
@@ -133,7 +129,9 @@ public class GameManager : MonoBehaviour
     cursor.Select(() => {
       // Valicate Movement
       Vector3 tileCoord = cursor.selectedTileCoord;
-      int distance = ValidateMovement(tileCoord);
+
+      //int distance = ValidateMovement(tileCoord);
+      int distance = ValidateRange(tileCoord, Players_SO[whosTurn].token.transform.position, Players_SO[whosTurn].currentMovement);
       // If distance is valid, move
       if(distance != -1) {
         map.GetComponent<TDMap>().SetOccupant((int)((curLocation.x-5)/5), (int)((curLocation.z-5)/5), 0);
@@ -146,10 +144,20 @@ public class GameManager : MonoBehaviour
     });
   }
 
-  public int ValidateMovement(Vector3 tileCoord)
+  public void OnDashButton()
   {
-    float xDistance = tileCoord.x - Players_SO[whosTurn].token.transform.position.x;
-    float zDistance = tileCoord.z - Players_SO[whosTurn].token.transform.position.z;
+    Players_SO[whosTurn].currentMovement += Players_SO[whosTurn].maxMovement;
+    OnMoveButton();
+  }
+
+  /* Checks to see if the selected tile is within a certain range from a central point
+   * Returns: If the tileCoord is within range, return how far away it is from the central point. Else, return -1
+   */
+  public int ValidateRange(Vector3 tileCoord, Vector3 centerPoint, int range)
+  {
+    // Get the distance the tile coord is from the player
+    float xDistance = tileCoord.x - centerPoint.x;
+    float zDistance = tileCoord.z - centerPoint.z;
     float distance;
     // Absolute value
     if(xDistance < 0)
@@ -161,9 +169,8 @@ public class GameManager : MonoBehaviour
       distance = xDistance;
     else
       distance = zDistance;
-    // check if that is in range for player speed
-    int currentMovement = Players_SO[whosTurn].currentMovement;
-    if(distance <= currentMovement)
+
+    if(distance <= range)
       return (int)distance;
     return -1;
   }
